@@ -1,0 +1,32 @@
+import weaviate
+
+class WeaviateIntegration:
+    def __init__(self, url):
+        self.client = weaviate.Client(url)
+
+    def store_tasks(self, tasks):
+        for task in tasks:
+            # Ensure the task data is in the correct format
+            task_data = {
+                "name": str(task.get("name", "")),
+                "description": str(task.get("notes", "")),
+                "due_date": str(task.get("due_on", ""))
+            }
+            # Add the task to Weaviate
+            self.client.data_object.create(
+                data_object=task_data,
+                class_name="Task"
+            )
+
+    def store_data(self, data, data_type):
+        for item in data:
+            # Ensure the data is in the correct format
+            item_data = {
+                "content": str(item),
+                "source": "web"
+            }
+            # Add the data to Weaviate
+            self.client.data_object.create(
+                data_object=item_data,
+                class_name=data_type
+            )
